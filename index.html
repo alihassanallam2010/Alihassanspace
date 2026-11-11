@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
+<title>AliAllam Space</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth}
+body{font-family:Arial,sans-serif;background:#050b18;color:#fff;overflow-x:hidden}
+
+/* ===== Login Screen ===== */
+#loginScreen{
+  position:fixed;inset:0;z-index:20;
+  display:flex;justify-content:center;align-items:center;
+  background:#000;
+  padding:20px;
+}
+.login-box{
+  width:min(100%,380px);
+  padding:42px 30px;
+  text-align:center;
+  border-radius:20px;
+  background:rgba(10,12,20,0.95);
+  border:1px solid rgba(0,200,255,0.25);
+  box-shadow:0 0 40px rgba(0,150,255,0.12), inset 0 0 30px rgba(0,100,200,0.05);
+}
+.logo{
+  color:#00d4ff;
+  font-size:26px;
+  font-weight:bold;
+  margin-bottom:8px;
+  letter-spacing:1px;
+  text-shadow:0 0 15px rgba(0,212,255,0.5);
+}
+.login-box h2{margin:12px 0 6px;font-size:22px;color:#e8e8e8}
+.login-box p{color:#6a7a8a;margin-bottom:28px;font-size:14px}
+.login-box input{
+  width:100%;
+  padding:15px;
+  border:1px solid rgba(0,200,255,0.2);
+  border-radius:12px;
+  outline:none;
+  color:#fff;
+  background:rgba(0,20,40,0.6);
+  font-size:16px;
+  text-align:center;
+  margin-bottom:16px;
+  transition:0.3s;
+}
+.login-box input:focus{
+  border-color:#00d4ff;
+  box-shadow:0 0 15px rgba(0,212,255,0.25);
+}
+.login-box button{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  background:linear-gradient(135deg,#00b4ff,#0077ff);
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  padding:15px;
+  cursor:pointer;
+  transition:0.3s;
+  box-shadow:0 0 20px rgba(0,150,255,0.3);
+}
+.login-box button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 30px rgba(0,180,255,0.5);
+}
+#errorMessage{color:#ff5a5a;margin-top:14px;font-size:14px}
+
+/* ===== شاشة الأنيميشن ===== */
+#introScreen{
+  position:fixed;inset:0;z-index:15;
+  display:none;
+  background:#000;
+  overflow:hidden;
+}
+
+.key{
+  position:absolute;
+  width:48px;
+  height:48px;
+  background:linear-gradient(145deg,#1c1c1c,#0e0e0e);
+  border-radius:8px;
+  border:1px solid rgba(0,200,255,0.4);
+  box-shadow:0 0 14px rgba(0,180,255,0.35), inset 0 0 8px rgba(0,0,0,0.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  font-weight:700;
+  color:#00d4ff;
+  text-shadow:0 0 8px rgba(0,212,255,0.8);
+  opacity:0;
+  transition:transform 1.35s cubic-bezier(0.2,0.8,0.2,1), opacity 0.7s ease;
+  z-index:2;
+}
+
+.welcome-text{
+  position:absolute;
+  top:38%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:clamp(28px,6vw,48px);
+  font-weight:600;
+  color:#fff;
+  letter-spacing:4px;
+  text-shadow:0 0 25px rgba(0,200,255,0.5);
+  opacity:0;
+  transition:opacity 1s ease, transform 1s ease;
+  z-index:6;
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+.name-container{
+  position:absolute;
+  top:54%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  z-index:5;
+}
+
+.name-key{
+  width:48px;
+  height:48px;
+  background:linear-gradient(145deg,#1c1c1c,#0e0e0e);
+  border-radius:8px;
+  border:1px solid rgba(0,200,255,0.45);
+  box-shadow:0 0 16px rgba(0,180,255,0.4), inset 0 0 8px rgba(0,0,0,0.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  font-weight:700;
+  color:#00d4ff;
+  text-shadow:0 0 10px rgba(0,212,255,0.9);
+  opacity:0;
+  transition:all 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ===== Main Site ===== */
+#mainSite{display:none}
+header{
+  position:fixed;top:0;left:0;width:100%;z-index:5;
+  padding:16px 6%;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  background:#050b18df;backdrop-filter:blur(15px);
+  border-bottom:1px solid #ffffff12;
+}
+header .logo{margin:0;font-size:21px;color:#66c5ff}
+nav{display:flex;gap:18px;flex-wrap:wrap}
+nav a{color:#c6d5e8;text-decoration:none;font-size:14px}
+nav a:hover{color:#55c7ff}
+
+section{
+  min-height:100vh;padding:125px 9% 65px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.hero{background:radial-gradient(circle at 80% 40%,#123e6b55,transparent 35%),#050b18}
+.small-title{color:#55c7ff;letter-spacing:4px;font-size:12px;margin-bottom:20px}
+.hero h1{font-size:clamp(45px,8vw,85px);line-height:1.1;margin-bottom:20px}
+.hero h1 span,.section-title span{color:#55c7ff}
+.hero p,.section-text{max-width:700px;color:#a9bad0;font-size:18px;line-height:1.8}
+.main-button{
+  display:inline-block;width:fit-content;margin-top:28px;
+  text-decoration:none;transition:.3s;
+  border:0;border-radius:30px;
+  background:linear-gradient(120deg,#168bff,#55c7ff);
+  color:white;font-size:16px;font-weight:bold;padding:14px 24px;
+}
+.main-button:hover{transform:translateY(-4px);box-shadow:0 10px 30px #168bff44}
+.section-title{font-size:clamp(35px,5vw,55px);margin-bottom:25px}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));
+  gap:18px;margin-top:30px;
+}
+.card{
+  padding:26px;border:1px solid #ffffff18;border-radius:20px;
+  background:linear-gradient(145deg,#ffffff12,#ffffff04);transition:.3s;
+}
+.card:hover{transform:translateY(-6px);border-color:#55c7ff77}
+.emoji{font-size:34px;margin-bottom:16px}
+.card h3{color:#70caff;margin-bottom:12px}
+.card p{color:#a9bad0;line-height:1.7}
+footer{
+  padding:25px;text-align:center;color:#71849d;
+  border-top:1px solid #ffffff12;background:#030711;
+}
+
+:root{
+  --bg:#050b18;--panel:#ffffff0b;--panel-border:#ffffff18;
+  --fg:#fff;--muted:#a9bad0;--accent:#55c7ff;--header:#050b18df;
+}
+body{background:var(--bg);color:var(--fg);transition:background .35s,color .35s}
+body.light-mode{
+  --bg:#eef5fc;--panel:#ffffffc9;--panel-border:#c8d9e9;
+  --fg:#10243b;--muted:#52677f;--accent:#087fc5;--header:#f4f8fce8;
+}
+body.light-mode .hero{background:radial-gradient(circle at 80% 40%,#9edcff66,transparent 38%),var(--bg)}
+body.light-mode header{background:var(--header);border-color:#9db5cc66}
+body.light-mode nav a{color:#344b63}
+body.light-mode .card{background:linear-gradient(145deg,#ffffffed,#e6f1fa);border-color:var(--panel-border)}
+body.light-mode .card p,body.light-mode .hero p,body.light-mode .section-text{color:var(--muted)}
+body.light-mode footer{background:#e3edf7;color:#52677f;border-color:#c8d9e9}
+body.light-mode .section-title span,body.light-mode .hero h1 span{color:#087fc5}
+
+.header-actions{display:flex;align-items:center;gap:14px}
+.menu-toggle{
+  display:none;border:1px solid var(--panel-border);
+  background:var(--panel);color:var(--fg);
+  border-radius:12px;padding:10px 13px;cursor:pointer;font-size:14px;
+}
+
+.theme-switch{
+  position:relative;width:76px;height:38px;
+  border:none;background:transparent;cursor:pointer;padding:0;flex-shrink:0;
+}
+.theme-switch .track{
+  width:100%;height:100%;
+  background:#1a1f2e;border-radius:40px;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.05);
+  position:relative;transition:background .4s ease;
+  border:1px solid #2a3145;
+}
+body.light-mode .theme-switch .track{
+  background:#d6e4f5;border-color:#b8cce0;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,0.12);
+}
+.theme-switch .thumb{
+  position:absolute;top:3px;left:3px;width:32px;height:32px;border-radius:50%;
+  background:#0d121f;display:flex;align-items:center;justify-content:center;
+  transition:transform .45s cubic-bezier(0.34,1.56,0.64,1),background .35s ease,box-shadow .35s ease;
+  box-shadow:0 0 0 3px #0a0e18,0 4px 12px rgba(0,0,0,0.45),inset 0 1px 1px rgba(255,255,255,0.08);
+}
+body.light-mode .theme-switch .thumb{
+  transform:translateX(38px);background:#fff;
+  box-shadow:0 0 0 3px #e8f0fa,0 4px 14px rgba(0,80,160,0.18),inset 0 1px 1px rgba(255,255,255,0.9);
+}
+.theme-switch .icon{
+  font-size:16px;line-height:1;
+  transition:opacity .3s ease,transform .35s ease,filter .35s ease;
+  position:absolute;
+}
+.theme-switch .moon{
+  opacity:1;transform:scale(1) rotate(0deg);
+  filter:drop-shadow(0 0 6px #3aa0ff) drop-shadow(0 0 12px #1e80ff);
+  color:#5eb8ff;
+}
+.theme-switch .sun{
+  opacity:0;transform:scale(0.4) rotate(-40deg);
+  filter:drop-shadow(0 0 4px #ffb84d);color:#ff9f1a;
+}
+body.light-mode .theme-switch .moon{opacity:0;transform:scale(0.4) rotate(40deg)}
+body.light-mode .theme-switch .sun{opacity:1;transform:scale(1) rotate(0deg)}
+.theme-switch:active .thumb{transform:scale(0.92)}
+body.light-mode .theme-switch:active .thumb{transform:translateX(38px) scale(0.92)}
+
+.hero-layout{display:flex;align-items:center;justify-content:space-between;gap:35px}
+.hero-copy{flex:1}
+.profile-area{width:min(32vw,270px);flex-shrink:0;text-align:center}
+.profile-frame{
+  width:100%;aspect-ratio:1;border-radius:50%;padding:7px;
+  background:linear-gradient(135deg,#55c7ff,#1765bb,#b9eaff);
+  box-shadow:0 0 45px #168bff44;overflow:hidden;
+}
+.profile-frame img{
+  width:100%;height:100%;border-radius:50%;
+  object-fit:cover;background:#10243b;display:block;
+}
+.photo-button{
+  display:inline-block;margin-top:16px;padding:11px 16px;
+  border:1px solid var(--panel-border);border-radius:12px;
+  background:var(--panel);color:var(--fg);font-size:13px;cursor:pointer;
+}
+.photo-hint{font-size:11px;color:var(--muted);margin-top:8px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
+.meta-card{
+  padding:13px 16px;border:1px solid var(--panel-border);
+  background:var(--panel);border-radius:14px;
+  color:var(--muted);font-size:14px;backdrop-filter:blur(12px);
+}
+.meta-card strong{display:block;color:var(--accent);font-size:17px;margin-bottom:4px}
+
+@media(max-width:700px){
+  header{flex-direction:row!important;justify-content:space-between!important;flex-wrap:wrap}
+  .menu-toggle{display:inline-block}
+  header nav{
+    display:none;width:100%;padding:14px;
+    background:var(--panel);border:1px solid var(--panel-border);
+    border-radius:14px;flex-direction:column;gap:15px;
+  }
+  header nav.open{display:flex}
+  .hero-layout{flex-direction:column-reverse;align-items:flex-start}
+  .profile-area{width:min(58vw,220px);align-self:center;margin-bottom:8px}
+}
+@media(max-width:650px){
+  header{padding:14px 4%;flex-direction:column;gap:12px}
+  header .logo{font-size:20px}
+  nav{gap:12px;justify-content:center}
+  nav a{font-size:12px}
+  section{padding:130px 7% 60px}
+  .hero p,.section-text{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- شاشة الدخول -->
+<div id="loginScreen">
+  <form class="login-box" id="loginForm">
+    <div class="logo">AliAllamSpace.</div>
+    <h2>Welcome Back</h2>
+    <p>Enter your password to continue</p>
+    <input type="password" id="passwordInput" placeholder="Enter Password" autocomplete="current-password" required>
+    <button type="submit">Enter Space</button>
+    <div id="errorMessage"></div>
+  </form>
+</div>
+
+<!-- شاشة الأنيميشن -->
+<div id="introScreen"></div>
+
+<!-- الموقع الرئيسي -->
+<div id="mainSite">
+  <header>
+    <div class="logo">AliAllamSpace.</div>
+    <div class="header-actions">
+      <button class="theme-switch" id="themeToggle" type="button" aria-label="Toggle theme">
+        <div class="track">
+          <div class="thumb">
+            <span class="icon moon">☾</span>
+            <span class="icon sun">☀</span>
+          </div>
+        </div>
+      </button>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu">☰</button>
+    </div>
+    <nav id="mainNav">
+      <a href="#home">Home</a>
+      <a href="#about">About Me</a>
+      <a href="#interests">Interests</a>
+      <a href="#ambition">Ambition</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="hero-layout">
+      <div class="hero-copy">
+        <div class="small-title">WELCOME TO MY WORLD</div>
+        <h1>I'm Ali<br><span>Hassan.</span></h1>
+        <p>Welcome to my personal space. A place where technology, creativity and ambition come together.</p>
+        <div class="hero-meta">
+          <div class="meta-card"><strong id="liveClock">--:--</strong><span>Local time</span></div>
+          <div class="meta-card"><strong id="liveDate">Loading...</strong><span>Today</span></div>
+          <div class="meta-card"><strong>Ali Hassan</strong><span>Personal space</span></div>
+        </div>
+        <a href="#about" class="main-button">Explore My Space</a>
+      </div>
+      <div class="profile-area">
+        <div class="profile-frame">
+          <img id="profilePreview" alt="Your profile photo">
+        </div>
+        <label class="photo-button" for="photoPicker">＋ Choose Photo</label>
+        <input id="photoPicker" type="file" accept="image/*" hidden>
+        <div class="photo-hint">Choose a photo from this device</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="small-title">GET TO KNOW ME</div>
+    <h2 class="section-title">About <span>Me.</span></h2>
+    <p class="section-text">I'm Ali Hassan, a student who loves technology and discovering new things. I'm interested in programming, computers and everything related to the digital world. I believe that learning today builds the future tomorrow.</p>
+  </section>
+
+  <section id="interests">
+    <div class="small-title">WHAT I LOVE</div>
+    <h2 class="section-title">My <span>Interests.</span></h2>
+    <div class="cards">
+      <div class="card"><div class="emoji">💻</div><h3>Programming</h3><p>Learning how to build websites, create projects and turn ideas into reality.</p></div>
+      <div class="card"><div class="emoji">⚽</div><h3>Football</h3><p>Football is one of my favorite interests. I enjoy watching matches and following the game.</p></div>
+      <div class="card"><div class="emoji">🎮</div><h3>Gaming</h3><p>Exploring different games, enjoying challenges and discovering new gaming worlds.</p></div>
+      <div class="card"><div class="emoji">🚀</div><h3>Technology</h3><p>Discovering new technologies and keeping up with the latest innovations.</p></div>
+    </div>
+  </section>
+
+  <section id="ambition">
+    <div class="small-title">MY FUTURE</div>
+    <h2 class="section-title">My <span>Ambition.</span></h2>
+    <p class="section-text">My dream is to become an engineer. I want to develop my skills, learn more about technology and build something meaningful in the future.<br><br>This is just the beginning.</p>
+    <a href="#home" class="main-button">Back To Top</a>
+  </section>
+
+  <footer>© 2026 AliAllamSpace. All Rights Reserved.</footer>
+</div>
+
+<script>
+const correctPassword = "AliAllam";
+const loginForm = document.getElementById("loginForm");
+const passwordInput = document.getElementById("passwordInput");
+const errorMessage = document.getElementById("errorMessage");
+const introScreen = document.getElementById("introScreen");
+
+loginForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+  if (passwordInput.value === correctPassword) {
+    errorMessage.textContent = "";
+    document.getElementById("loginScreen").style.display = "none";
+    startIntro();
+  } else {
+    errorMessage.textContent = "Incorrect password. Try again.";
+    passwordInput.value = "";
+    passwordInput.focus();
+  }
+});
+
+function startIntro() {
+  introScreen.style.display = "block";
+  
+  // الزراير الطائرة
+  const keyChars = ["A","L","I","H","S","N","⌘","⌥","⇧","⌃","Z","X"];
+  const keys = [];
+  
+  keyChars.forEach((char, i) => {
+    const key = document.createElement("div");
+    key.className = "key";
+    key.textContent = char;
+    key.style.left = "50%";
+    key.style.top = "50%";
+    key.style.transform = "translate(-50%,-50%) scale(0.25)";
+    introScreen.appendChild(key);
+    keys.push(key);
+  });
+
+  // طيران الزراير
+  setTimeout(() => {
+    keys.forEach((key, i) => {
+      const angle = (i / keys.length) * Math.PI * 2;
+      const distance = 190 + Math.random() * 170;
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+      const rot = (Math.random() - 0.5) * 140;
+      
+      key.style.opacity = "1";
+      key.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${rot}deg) scale(1)`;
+    });
+  }, 60);
+
+  // اختفاء الزراير + ظهور Welcome + الاسم
+  setTimeout(() => {
+    keys.forEach(key => {
+      key.style.opacity = "0";
+      key.style.transform += " scale(0.4)";
+    });
+
+    // كلمة Welcome
+    const welcome = document.createElement("div");
+    welcome.className = "welcome-text";
+    welcome.textContent = "Welcome";
+    introScreen.appendChild(welcome);
+
+    setTimeout(() => {
+      welcome.style.opacity = "1";
+      welcome.style.transform = "translate(-50%,-50%) scale(1)";
+    }, 200);
+
+    // اسمك على شكل زراير
+    const name = "Ali Hassan";
+    const nameContainer = document.createElement("div");
+    nameContainer.className = "name-container";
+    introScreen.appendChild(nameContainer);
+
+    const nameKeys = [];
+    name.split("").forEach((char) => {
+      const key = document.createElement("div");
+      key.className = "name-key";
+      key.textContent = char === " " ? "" : char;
+      
+      if (char === " ") {
+        key.style.width = "18px";
+        key.style.border = "none";
+        key.style.background = "transparent";
+        key.style.boxShadow = "none";
+      }
+      
+      const startX = (Math.random() - 0.5) * 750;
+      const startY = (Math.random() - 0.5) * 520;
+      const startRot = (Math.random() - 0.5) * 90;
+      
+      key.style.opacity = "0";
+      key.style.transform = `translate(${startX}px, ${startY}px) rotate(${startRot}deg) scale(0.25)`;
+      
+      nameContainer.appendChild(key);
+      nameKeys.push(key);
+    });
+
+    // ترتيب الزراير
+    setTimeout(() => {
+      nameKeys.forEach((key, i) => {
+        setTimeout(() => {
+          key.style.opacity = "1";
+          key.style.transform = "translate(0, 0) rotate(0deg) scale(1)";
+        }, i * 95);
+      });
+    }, 450);
+
+    // الدخول على الموقع
+    setTimeout(() => {
+      introScreen.style.transition = "opacity 0.9s ease";
+      introScreen.style.opacity = "0";
+      setTimeout(() => {
+        introScreen.style.display = "none";
+        document.getElementById("mainSite").style.display = "block";
+      }, 900);
+    }, 4300);
+
+  }, 1550);
+}
+
+/* باقي الموقع */
+const themeToggle = document.getElementById("themeToggle");
+themeToggle.addEventListener("click", function () {
+  document.body.classList.toggle("light-mode");
+});
+
+const menuToggle = document.getElementById("menuToggle");
+const mainNav = document.getElementById("mainNav");
+menuToggle.addEventListener("click", function () {
+  mainNav.classList.toggle("open");
+  menuToggle.textContent = mainNav.classList.contains("open") ? "✕" : "☰";
+});
+mainNav.querySelectorAll("a").forEach(function (link) {
+  link.addEventListener("click", function () {
+    mainNav.classList.remove("open");
+    menuToggle.textContent = "☰";
+  });
+});
+
+const photoPicker = document.getElementById("photoPicker");
+const profilePreview = document.getElementById("profilePreview");
+photoPicker.addEventListener("change", function () {
+  const file = photoPicker.files && photoPicker.files[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    alert("Please choose an image file.");
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    profilePreview.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function updateDateTime() {
+  const now = new Date();
+  document.getElementById("liveClock").textContent =
+    now.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit"});
+  document.getElementById("liveDate").textContent =
+    now.toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"});
+}
+updateDateTime();
+setInterval(updateDateTime, 1000);
+</script>
+</body>
+</html>
